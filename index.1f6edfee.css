@@ -1,0 +1,81 @@
+* {
+  padding: 0;
+  margin: 0;
+  outline: 0;
+}
+
+html {
+  height: 100%;
+  font-size: 62.5%;
+}
+
+body {
+  background: #fafafa;
+  color: #000;
+  font-family: "Open Sans", sans-serif;
+  font-size: 1.8rem;
+}
+
+.container {
+  width: 410px;
+  margin: 0 auto;
+}
+.container > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.container > div section {
+  display: flex;
+  margin: 1rem 0;
+}
+
+button {
+  width: 60px;
+  height: 60px;
+  border: 0;
+  background: #73ff00;
+  color: #000;
+  cursor: pointer;
+  font-size: 2.5rem;
+  font-weight: 700;
+}
+button[disabled] {
+  background-color: #dadada;
+}
+
+input[type=text] {
+  width: 60px;
+  height: 60px;
+  border: 2px solid #dadada;
+  margin-right: 1rem;
+  -webkit-appearance: none;
+  background: #fff;
+  caret-color: transparent;
+  font-size: 4rem;
+  font-weight: 600;
+  text-align: center;
+  text-transform: uppercase;
+}
+input[type=text]:focus {
+  border-color: #666;
+}
+input[type=text][disabled] {
+  color: #fff;
+  opacity: 1;
+  -webkit-text-fill-color: #fff;
+}
+input[type=text][disabled].exact {
+  border-color: green;
+  background-color: green;
+}
+input[type=text][disabled].partial {
+  border-color: orange;
+  background-color: orange;
+}
+input[type=text][disabled].miss {
+  border-color: #999;
+  background-color: #999;
+}
+/*# sourceMappingURL=index.1f6edfee.css.map */

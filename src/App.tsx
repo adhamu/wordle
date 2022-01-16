@@ -4,10 +4,13 @@ const attempts = 6
 const wordLength = 5
 // const dictionary = ['break', 'broke', 'coral', 'loyal', 'panic', 'ferry']
 const targetWord = 'loyal'
+const defaultGuesses = new Array(attempts).fill({
+  letters: [],
+  status: [],
+})
 
 const App = (): JSX.Element => {
-  const [guess1, setGuess1] = React.useState<string[]>([])
-  const [guess1Status, setGuess1Status] = React.useState<boolean[]>([])
+  const [guesses, setGuesses] = React.useState(defaultGuesses)
   const [feedback, setFeedback] = React.useState('')
   const [attemptsRemaining, setAttemptsRemaining] = React.useState(attempts)
 
@@ -22,10 +25,17 @@ const App = (): JSX.Element => {
     return results
   }
 
-  const guessesWord = (word: string) => {
+  const guessesWord = (word: string, attempt: number) => {
     console.log({ word })
     console.log(compareWithTarget(word.split('')))
-    setGuess1Status(compareWithTarget(word.split('')))
+
+    setGuesses({
+      ...guesses,
+      [attempt]: {
+        letters: word.split(''),
+        status: compareWithTarget(word.split('')),
+      },
+    })
 
     if (word === targetWord) {
       setFeedback(`${word} is the CORRECT word. Well done`)
@@ -36,8 +46,8 @@ const App = (): JSX.Element => {
   }
 
   React.useEffect(() => {
-    console.log(guess1)
-  }, [guess1])
+    console.log(guesses)
+  }, [guesses])
 
   return (
     <>
@@ -47,23 +57,40 @@ const App = (): JSX.Element => {
         <p>Attempt #1</p>
         {Array.from({ length: wordLength }, (_, letter) => (
           <input
+            key={letter}
             type="text"
             style={
-              guess1Status.length
+              guesses[0].status.length
                 ? {
-                    border: guess1Status[letter]
+                    border: guesses[0].status[letter]
                       ? '2px solid green'
                       : '2px solid red',
                   }
                 : {}
             }
             onChange={e => {
-              setGuess1(Object.assign([], guess1, { [letter]: e.target.value }))
+              setGuesses(
+                Object.assign([], guesses[0].letters, {
+                  [letter]: e.target.value,
+                })
+              )
+              setGuesses({
+                ...guesses,
+                0: {
+                  ...guesses[0],
+                  letters: Object.assign([], guesses[0].letters, {
+                    [letter]: e.target.value,
+                  }),
+                },
+              })
             }}
           />
         ))}
 
-        <button type="button" onClick={() => guessesWord(guess1.join(''))}>
+        <button
+          type="button"
+          onClick={() => guessesWord(guesses[0].letters.join(''), 0)}
+        >
           Guess
         </button>
       </div>

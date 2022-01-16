@@ -3,10 +3,11 @@ import * as React from 'react'
 const attempts = 6
 const wordLength = 5
 // const dictionary = ['break', 'broke', 'coral', 'loyal', 'panic', 'ferry']
-const targetWord = 'loyal'
+const targetWord = 'loyal'.toUpperCase()
 const defaultGuesses = new Array(attempts).fill({
   letters: [],
   status: [],
+  disabled: false,
 })
 
 const App = (): JSX.Element => {
@@ -25,15 +26,13 @@ const App = (): JSX.Element => {
     return results
   }
 
-  const guessesWord = (word: string, attempt: number) => {
-    console.log({ word })
-    console.log(compareWithTarget(word.split('')))
-
+  const guessWord = (word: string, attempt: number) => {
     setGuesses({
       ...guesses,
       [attempt]: {
         letters: word.split(''),
         status: compareWithTarget(word.split('')),
+        disabled: true,
       },
     })
 
@@ -44,10 +43,6 @@ const App = (): JSX.Element => {
       setAttemptsRemaining(attemptsRemaining - 1)
     }
   }
-
-  React.useEffect(() => {
-    console.log(guesses)
-  }, [guesses])
 
   return (
     <>
@@ -61,7 +56,9 @@ const App = (): JSX.Element => {
               <input
                 key={letter}
                 type="text"
+                maxLength={1}
                 tabIndex={Number([attempt + 1, letter].join(''))}
+                disabled={guesses[attempt].disabled}
                 style={
                   guesses[attempt].status.length
                     ? {
@@ -71,16 +68,33 @@ const App = (): JSX.Element => {
                       }
                     : {}
                 }
-                onChange={e => {
-                  setGuesses({
-                    ...guesses,
-                    [attempt]: {
-                      ...guesses[attempt],
-                      letters: Object.assign([], guesses[attempt].letters, {
-                        [letter]: e.target.value,
-                      }),
-                    },
-                  })
+                onKeyUp={e => {
+                  const t = e.target as Partial<HTMLInputElement>
+                  t.value = t.value?.toUpperCase()
+
+                  if (e.key === 'Backspace') {
+                    ;(t.previousSibling as HTMLElement).focus()
+                    ;(t.previousSibling as HTMLInputElement).value = ''
+                  }
+
+                  if (
+                    (e.key >= 'a' && e.key <= 'z') ||
+                    (e.key >= 'A' && e.key <= 'Z')
+                  ) {
+                    setGuesses({
+                      ...guesses,
+                      [attempt]: {
+                        ...guesses[attempt],
+                        letters: Object.assign([], guesses[attempt].letters, {
+                          [letter]: t.value,
+                        }),
+                      },
+                    })
+
+                    if (letter !== wordLength - 1) {
+                      ;(t.nextElementSibling as HTMLElement).focus()
+                    }
+                  }
                 }}
               />
             ))}
@@ -89,7 +103,9 @@ const App = (): JSX.Element => {
               type="button"
               tabIndex={Number([attempt + 1, wordLength].join(''))}
               onClick={() =>
-                guessesWord(guesses[attempt].letters.join(''), attempt)
+                guesses[attempt].letters.filter(Boolean).length ===
+                  wordLength &&
+                guessWord(guesses[attempt].letters.join(''), attempt)
               }
             >
               Guess

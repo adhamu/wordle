@@ -54,45 +54,48 @@ const App = (): JSX.Element => {
       Wordle!
       <p>{feedback}</p>
       <div>
-        <p>Attempt #1</p>
-        {Array.from({ length: wordLength }, (_, letter) => (
-          <input
-            key={letter}
-            type="text"
-            style={
-              guesses[0].status.length
-                ? {
-                    border: guesses[0].status[letter]
-                      ? '2px solid green'
-                      : '2px solid red',
-                  }
-                : {}
-            }
-            onChange={e => {
-              setGuesses(
-                Object.assign([], guesses[0].letters, {
-                  [letter]: e.target.value,
-                })
-              )
-              setGuesses({
-                ...guesses,
-                0: {
-                  ...guesses[0],
-                  letters: Object.assign([], guesses[0].letters, {
-                    [letter]: e.target.value,
-                  }),
-                },
-              })
-            }}
-          />
-        ))}
+        {Array.from({ length: attempts }, (_i, attempt) => (
+          <React.Fragment key={attempt}>
+            <p>Attempt #{attempt + 1}</p>
+            {Array.from({ length: wordLength }, (_j, letter) => (
+              <input
+                key={letter}
+                type="text"
+                tabIndex={Number([attempt + 1, letter].join(''))}
+                style={
+                  guesses[attempt].status.length
+                    ? {
+                        border: guesses[attempt].status[letter]
+                          ? '2px solid green'
+                          : '2px solid red',
+                      }
+                    : {}
+                }
+                onChange={e => {
+                  setGuesses({
+                    ...guesses,
+                    [attempt]: {
+                      ...guesses[attempt],
+                      letters: Object.assign([], guesses[attempt].letters, {
+                        [letter]: e.target.value,
+                      }),
+                    },
+                  })
+                }}
+              />
+            ))}
 
-        <button
-          type="button"
-          onClick={() => guessesWord(guesses[0].letters.join(''), 0)}
-        >
-          Guess
-        </button>
+            <button
+              type="button"
+              tabIndex={Number([attempt + 1, wordLength].join(''))}
+              onClick={() =>
+                guessesWord(guesses[attempt].letters.join(''), attempt)
+              }
+            >
+              Guess
+            </button>
+          </React.Fragment>
+        ))}
       </div>
     </>
   )

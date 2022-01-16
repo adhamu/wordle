@@ -1,11 +1,17 @@
 import * as React from 'react'
 
-const attempts = 6
-const dictionary = ['break', 'broke', 'coral', 'loyal', 'panic', 'ferry']
+const attemptsPermitted = 6
+
+const dictionaryOfWords = ['break', 'broke', 'coral', 'loyal', 'panic', 'ferry']
+
 const targetWord =
-  dictionary[Math.floor(Math.random() * dictionary.length)].toUpperCase()
+  dictionaryOfWords[
+    Math.floor(Math.random() * dictionaryOfWords.length)
+  ].toUpperCase()
+
 const wordLength = targetWord.length
-const defaultGuesses = new Array(attempts).fill({
+
+const defaultGuesses = new Array(attemptsPermitted).fill({
   letters: [],
   status: [],
   disabled: false,
@@ -18,14 +24,14 @@ const getStyle = (
   } | null
 ) => {
   if (result?.exact === true) {
-    return { backgroundColor: 'green', borderColor: 'green' }
+    return 'exact'
   }
 
   if (result?.exact === false) {
-    return { backgroundColor: 'orange', borderColor: 'orange' }
+    return 'partial'
   }
 
-  return { backgroundColor: '#999', borderColor: '#999' }
+  return 'miss'
 }
 
 const App = (): JSX.Element => {
@@ -82,13 +88,19 @@ const App = (): JSX.Element => {
     }
   }
 
+  React.useEffect(() => {
+    if (currentAttempt === attemptsPermitted) {
+      setFeedback('You have no attempts left. Please try again')
+    }
+  }, [currentAttempt])
+
   return (
     <div className="container">
       <h1>Wordle!</h1>
       <hr />
       <p>{feedback}</p>
       <div>
-        {Array.from({ length: attempts }, (_i, attempt) => (
+        {Array.from({ length: attemptsPermitted }, (_i, attempt) => (
           <section key={attempt}>
             {Array.from({ length: wordLength }, (_j, letter) => (
               <input
@@ -97,10 +109,10 @@ const App = (): JSX.Element => {
                 maxLength={1}
                 tabIndex={Number([attempt + 1, letter].join(''))}
                 disabled={isDisabled(attempt)}
-                style={
+                className={
                   guesses[attempt].status.length
                     ? getStyle(guesses[attempt].status[letter])
-                    : {}
+                    : ''
                 }
                 onKeyUp={e => {
                   const t = e.target as Partial<HTMLInputElement>

@@ -68,5 +68,20 @@ input[type='text'] {
     color: #fff;
     opacity: 1;
     -webkit-text-fill-color: #fff;
+
+    &.exact {
+      border-color: green;
+      background-color: green;
+    }
+
+    &.partial {
+      border-color: orange;
+      background-color: orange;
+    }
+
+    &.miss {
+      border-color: #999;
+      background-color: #999;
+    }
   }
 }

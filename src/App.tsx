@@ -125,6 +125,8 @@ const App = (): JSX.Element => {
                   if (e.key === 'Backspace') {
                     ;(t.previousSibling as HTMLElement).focus()
                     ;(t.previousSibling as HTMLInputElement).value = ''
+                  } else if (e.key === 'Enter') {
+                    guessWord(guesses[attempt].letters.join(''), attempt)
                   } else if (/[A-Za-z]/.test(e.key)) {
                     setGuesses({
                       ...guesses,
@@ -136,7 +138,7 @@ const App = (): JSX.Element => {
                       },
                     })
 
-                    if (letter !== wordLength - 1) {
+                    if (letter !== wordLength - 1 && t.value !== '') {
                       ;(t.nextElementSibling as HTMLElement).focus()
                     }
                   }
